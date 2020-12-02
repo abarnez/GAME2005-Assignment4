@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class BulletManager
 {
+    /*
     // step 1. create a private static instance
     private static BulletManager m_instance = null;
 
@@ -74,4 +75,5 @@ public class BulletManager
         returnedBullet.SetActive(false);
         m_bulletPool.Enqueue(returnedBullet);
     }
+    */
 }

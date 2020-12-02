@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class BulletFactory 
 {
+    /*
     // step 1. private static instance
     private static BulletFactory m_instance = null;
 
@@ -14,7 +15,7 @@ public class BulletFactory
     private GameObject pulsingBullet;
 
     // game controller reference
-    private GameController gameController;
+   // private GameController gameController;
 
     // step 2. make constructor private
     private BulletFactory()
@@ -82,4 +83,5 @@ public class BulletFactory
 
         return tempBullet;
     }
+    */
 }

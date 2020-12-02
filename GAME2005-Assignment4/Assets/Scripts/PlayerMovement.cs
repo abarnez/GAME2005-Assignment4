@@ -15,6 +15,11 @@ public class PlayerMovement : MonoBehaviour
     public float lookSpeed = 2.0f;
     public float lookXLimit = 45.0f;
 
+    public GameObject Ball;
+    public Transform FiringOrigin;
+
+    private int lastFrame;
+
     CharacterController characterController;
     Vector3 moveDirection = Vector3.zero;
     float rotationX = 0;
@@ -74,8 +79,16 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKeyDown("b"))
         {
-            Debug.Log("b press");
             SceneManager.LoadScene("Start");
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (Time.frameCount - lastFrame >= 250)
+            {
+                GameObject.Instantiate(Ball, FiringOrigin.position, transform.rotation);
+                lastFrame = Time.frameCount;
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     public Camera playerCamera;
     public float lookSpeed = 2.0f;
     public float lookXLimit = 45.0f;
-    public Canvas gui;
+    public GameObject Sliders;
 
     public GameObject Ball;
     public Transform FiringOrigin;
@@ -31,10 +31,10 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         characterController = GetComponent<CharacterController>();
-
         // Lock cursor
-       // Cursor.lockState = CursorLockMode.Locked;
-       // Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        Sliders.SetActive(false);
     }
 
     void Update()
@@ -80,19 +80,23 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKeyDown("m"))
         {
-            if (gui.enabled == true)
+            if (Sliders.activeSelf == true)
             {
-                // Cursor.lockState = CursorLockMode.Locked;
+                Cursor.lockState = CursorLockMode.Locked;
                 Time.timeScale = 1;
                 Cursor.visible = false;
-                gui.GetComponent<Canvas>().enabled = false;
+                Sliders.SetActive(false);
+                canMove = true;
+                //gui.GetComponent<Canvas>().enabled = false;
             }
             else
             {
-                // Cursor.lockState = CursorLockMode.None;
+                Cursor.lockState = CursorLockMode.None;
                 Time.timeScale = 0;
                 Cursor.visible = true;
-                gui.GetComponent<Canvas>().enabled = true;
+                Sliders.SetActive(true);
+                canMove = false;
+                //gui.GetComponent<Canvas>().enabled = true;
             }
         }
 
@@ -101,11 +105,11 @@ public class PlayerMovement : MonoBehaviour
             SceneManager.LoadScene("Start");
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && canMove)
         {
             if (Time.frameCount - lastFrame >= 250)
             {
-                GameObject.Instantiate(Ball, FiringOrigin.position, transform.rotation);
+                var newObject = GameObject.Instantiate(Ball, FiringOrigin.position, transform.rotation);
                 lastFrame = Time.frameCount;
             }
         }

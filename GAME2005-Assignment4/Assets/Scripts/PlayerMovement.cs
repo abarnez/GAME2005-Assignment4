@@ -14,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
     public Camera playerCamera;
     public float lookSpeed = 2.0f;
     public float lookXLimit = 45.0f;
+    public Canvas gui;
 
     public GameObject Ball;
     public Transform FiringOrigin;
@@ -32,8 +33,8 @@ public class PlayerMovement : MonoBehaviour
         characterController = GetComponent<CharacterController>();
 
         // Lock cursor
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = true;
+       // Cursor.lockState = CursorLockMode.Locked;
+       // Cursor.visible = false;
     }
 
     void Update()
@@ -75,6 +76,24 @@ public class PlayerMovement : MonoBehaviour
             rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
             playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
             transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
+        }
+
+        if (Input.GetKeyDown("m"))
+        {
+            if (gui.enabled == true)
+            {
+                // Cursor.lockState = CursorLockMode.Locked;
+                Time.timeScale = 1;
+                Cursor.visible = false;
+                gui.GetComponent<Canvas>().enabled = false;
+            }
+            else
+            {
+                // Cursor.lockState = CursorLockMode.None;
+                Time.timeScale = 0;
+                Cursor.visible = true;
+                gui.GetComponent<Canvas>().enabled = true;
+            }
         }
 
         if (Input.GetKeyDown("b"))

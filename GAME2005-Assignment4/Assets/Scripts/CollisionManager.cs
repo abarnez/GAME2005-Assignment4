@@ -7,6 +7,10 @@ public class CollisionManager : MonoBehaviour
 {
     public List<GameObject> Cubes;
     public List<GameObject> Spheres;
+
+    public float FrictionCoef;
+    public float MomentumCoef;
+
     // Start is called before the first frame update
     void Start()
     {

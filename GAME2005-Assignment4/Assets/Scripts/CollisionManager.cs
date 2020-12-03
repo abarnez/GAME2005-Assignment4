@@ -24,7 +24,7 @@ public class CollisionManager : MonoBehaviour
                 {
                     if (AABBCheck(Cubes[i], Cubes[j]))
                     {
-                        Debug.Log("Colliding");
+                        Debug.Log("Colliding Cube");
                     }
                 }
             }
@@ -75,14 +75,18 @@ public class CollisionManager : MonoBehaviour
         var min = Vector3.Scale(bB.min, b.transform.localScale) + b.transform.position;
         var max = Vector3.Scale(bB.max, b.transform.localScale) + b.transform.position;
 
-        var x = Mathf.Max(min.x, Mathf.Min(a.transform.position.x, max.x));
-        var y = Mathf.Max(min.y, Mathf.Min(a.transform.position.y, max.y));
-        var z = Mathf.Max(min.z, Mathf.Min(a.transform.position.z, max.z));
+        float aX = a.transform.position.x;
+        float aY = a.transform.position.y;
+        float aZ = a.transform.position.z;
 
-        var distance = Mathf.Sqrt((x - a.transform.position.x) * (x - a.transform.position.x) +
-            (y - a.transform.position.y) * (y - a.transform.position.y) +
-            (z - a.transform.position.z) * (z - a.transform.position.z));
+        var x = Mathf.Max(min.x, Mathf.Min(aX, max.x));
+        var y = Mathf.Max(min.y, Mathf.Min(aY, max.y));
+        var z = Mathf.Max(min.z, Mathf.Min(aZ, max.z));
 
-        return distance < aB.extents.magnitude;
+        var distance = Mathf.Sqrt((x - aX) * (x - aX) +
+            (y - aY) * (y - aY) +
+            (z - aZ) * (z - aZ));
+
+        return distance < Vector3.Scale(aB.extents, a.transform.localScale).magnitude;
     }
 }

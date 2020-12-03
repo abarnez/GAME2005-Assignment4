@@ -35,6 +35,7 @@ public class PlayerMovement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         Sliders.SetActive(false);
+        lastFrame = -250;
     }
 
     void Update()
@@ -109,7 +110,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (Time.frameCount - lastFrame >= 250)
             {
-                var newObject = GameObject.Instantiate(Ball, FiringOrigin.position, transform.rotation);
+                GameObject.Instantiate(Ball, FiringOrigin.position, FiringOrigin.rotation);
                 lastFrame = Time.frameCount;
             }
         }

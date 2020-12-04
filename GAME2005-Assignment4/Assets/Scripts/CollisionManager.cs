@@ -1,12 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class CollisionManager : MonoBehaviour
 {
     public List<GameObject> Cubes;
     public List<GameObject> Spheres;
+
+    public Slider Velocity;
+    public Slider Friction;
+    public Slider Mass;
+
+    public float velocity;
+    public float friction;
+    public float mass;
 
     public float FrictionCoef;
     public float MomentumCoef;
@@ -20,6 +29,11 @@ public class CollisionManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        velocity = Velocity.value;
+        friction = Friction.value;
+        mass = Mass.value;
+
+       
         for(int i = 0; i < Cubes.Count; i++)
         {
             for(int j = 0; j < Cubes.Count; j++)

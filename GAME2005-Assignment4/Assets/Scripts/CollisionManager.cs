@@ -1,12 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
+using TMPro;
 [System.Serializable]
 public class CollisionManager : MonoBehaviour
 {
     public List<GameObject> Cubes;
     public List<GameObject> Spheres;
+
+    //sliders
+    public Slider Velocity;
+    public Slider Friction;
+    public Slider Mass;
+    public float velocity;
+    public float friction;
+    public float mass;
+    //lables
+   // public TMP_Text sMass;
+   // public TMP_Text sPositon;
+    public TMP_Text sVelocity;
+   // public TMP_Text sAcceleration;
+   // public TMP_Text sForce;
 
     public float FrictionCoef;
     public float MomentumCoef;
@@ -20,6 +35,13 @@ public class CollisionManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        sVelocity.text = "Velocity: " + velocity;
+
+        velocity = Velocity.value;
+        friction = Friction.value;
+        mass = Mass.value;
+
+       
         for(int i = 0; i < Cubes.Count; i++)
         {
             for(int j = 0; j < Cubes.Count; j++)

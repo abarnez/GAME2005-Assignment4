@@ -16,6 +16,8 @@ public class BallBehaviour : MonoBehaviour
         public float Mass;
     }
 
+    public RigidBody rigidBody = new RigidBody();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,20 +25,22 @@ public class BallBehaviour : MonoBehaviour
 
         collisionManagerObject = GameObject.FindWithTag("CollisionManager");
         collisionManager = collisionManagerObject.GetComponent<CollisionManager>();
-        collisionManager.Spheres.Add(gameObject);
+        collisionManager.Spheres.Add(this);
 
         forwardVelocity = 3;
         //Debug.Log("Direction = " + forwardDirection);
-
-        RigidBody rigidBody = new RigidBody();
+        
         rigidBody.Velocity = new Vector3(0, 0, 0);
         rigidBody.Acceleration = new Vector3(0, 0, 0);
         rigidBody.Mass = 0;
+
+        rigidBody.Velocity = forwardDirection * forwardVelocity;
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.position += forwardDirection * forwardVelocity * Time.deltaTime;
+        rigidBody.Velocity += rigidBody.Acceleration * Time.deltaTime;
+        transform.position += rigidBody.Velocity * Time.deltaTime;
     }
 }

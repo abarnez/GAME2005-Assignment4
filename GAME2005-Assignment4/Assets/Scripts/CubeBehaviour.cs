@@ -16,14 +16,14 @@ public class CubeBehaviour : MonoBehaviour
         public float Mass;
     }
 
+    public RigidBody rigidBody = new RigidBody();
+
     // Start is called before the first frame update
     void Start()
     {
         collisionManagerObject = GameObject.FindWithTag("CollisionManager");
         collisionManager = collisionManagerObject.GetComponent<CollisionManager>();
-        collisionManager.Cubes.Add(gameObject);
-
-        RigidBody rigidBody = new RigidBody();
+        collisionManager.Cubes.Add(this);
         rigidBody.Velocity = new Vector3(0, 0, 0);
         rigidBody.Acceleration = new Vector3(0, 0, 0);
         rigidBody.Mass = 0;

@@ -10,7 +10,7 @@ public class ButtonScript : MonoBehaviour
     void Start()
     {
         Button btn = Button.GetComponent<Button>();
-        btn.onClick.AddListener(TaskOnClick);    
+        btn.onClick.AddListener(TaskOnClick);
     }
     void TaskOnClick()
     {

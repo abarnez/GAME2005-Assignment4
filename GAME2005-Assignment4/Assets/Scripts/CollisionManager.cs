@@ -90,20 +90,20 @@ public class CollisionManager : MonoBehaviour
         return false;
     }
 
-    private bool SphereAABBCheck(GameObject a, GameObject b)
+    private bool SphereAABBCheck(GameObject sphere, GameObject cube)
     {
-        MeshFilter aMF = a.GetComponent<MeshFilter>();
-        MeshFilter bMF = b.GetComponent<MeshFilter>();
+        MeshFilter aMF = sphere.GetComponent<MeshFilter>();
+        MeshFilter bMF = cube.GetComponent<MeshFilter>();
 
         Bounds aB = aMF.mesh.bounds;
         Bounds bB = bMF.mesh.bounds;
 
-        var min = Vector3.Scale(bB.min, b.transform.localScale) + b.transform.position;
-        var max = Vector3.Scale(bB.max, b.transform.localScale) + b.transform.position;
+        var min = Vector3.Scale(bB.min, cube.transform.localScale) + cube.transform.position;
+        var max = Vector3.Scale(bB.max, cube.transform.localScale) + cube.transform.position;
 
-        float aX = a.transform.position.x;
-        float aY = a.transform.position.y;
-        float aZ = a.transform.position.z;
+        float aX = sphere.transform.position.x;
+        float aY = sphere.transform.position.y;
+        float aZ = sphere.transform.position.z;
 
         var x = Mathf.Max(min.x, Mathf.Min(aX, max.x));
         var y = Mathf.Max(min.y, Mathf.Min(aY, max.y));
@@ -113,6 +113,8 @@ public class CollisionManager : MonoBehaviour
             (y - aY) * (y - aY) +
             (z - aZ) * (z - aZ));
 
-        return distance < Vector3.Scale(aB.extents, a.transform.localScale).magnitude;
+        float radius = Vector3.Scale(aB.extents, sphere.transform.localScale).magnitude;
+
+        return distance < Vector3.Scale(aB.extents, sphere.transform.localScale).magnitude;
     }
 }

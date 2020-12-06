@@ -6,8 +6,8 @@ using TMPro;
 [System.Serializable]
 public class CollisionManager : MonoBehaviour
 {
-    public List<GameObject> Cubes;
-    public List<GameObject> Spheres;
+    public List<CubeBehaviour> Cubes;
+    public List<BallBehaviour> Spheres;
 
     //sliders
     public Slider Velocity;
@@ -35,7 +35,7 @@ public class CollisionManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        sVelocity.text = "Velocity: " + velocity;
+        //sVelocity.text = "Velocity: " + velocity;
 
         velocity = Velocity.value;
         friction = Friction.value;
@@ -59,7 +59,7 @@ public class CollisionManager : MonoBehaviour
                 if (SphereAABBCheck(Spheres[k], Cubes[i]))
                 {
                     Debug.Log("Colliding Sphere");
-                    Destroy(Spheres[k]);
+                    Destroy(Spheres[k].gameObject);
                     Spheres.RemoveAt(k);
                 }
 
@@ -67,8 +67,11 @@ public class CollisionManager : MonoBehaviour
         }
     }
 
-    private bool AABBCheck(GameObject a, GameObject b)
+    private bool AABBCheck(CubeBehaviour Cube1, CubeBehaviour Cube2)
     {
+        GameObject a = Cube1.gameObject;
+        GameObject b = Cube2.gameObject;
+
         MeshFilter aMF = a.GetComponent<MeshFilter>();
         MeshFilter bMF = b.GetComponent<MeshFilter>();
 
@@ -90,8 +93,14 @@ public class CollisionManager : MonoBehaviour
         return false;
     }
 
-    private bool SphereAABBCheck(GameObject sphere, GameObject cube)
+    private bool SphereAABBCheck(BallBehaviour Sphere, CubeBehaviour Cube)
     {
+        GameObject sphere = Sphere.gameObject;
+        GameObject cube = Cube.gameObject;
+
+        // Can Access Cube and Sphere's rigidbody properties here.
+        //Debug.Log(Sphere.rigidBody.Velocity);
+
         MeshFilter aMF = sphere.GetComponent<MeshFilter>();
         MeshFilter bMF = cube.GetComponent<MeshFilter>();
 

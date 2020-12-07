@@ -26,6 +26,12 @@ public class CollisionManager : MonoBehaviour
     public float FrictionCoef;
     public float MomentumCoef;
 
+    struct Manifold
+    {
+        public Vector3 normal;
+        public bool result;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -56,13 +62,24 @@ public class CollisionManager : MonoBehaviour
             }
             for(int k = 0; k < Spheres.Count; k++)
             {
-                if (SphereAABBCheck(Spheres[k], Cubes[i]))
+                Manifold collision = SphereAABBCheck(Spheres[k], Cubes[i]);
+                if (collision.result)
                 {
-                    Debug.Log("Colliding Sphere");
-                    Destroy(Spheres[k].gameObject);
-                    Spheres.RemoveAt(k);
-                }
+                    Vector3 relativeVelocity = Cubes[i].rigidBody.Velocity - Spheres[k].rigidBody.Velocity;
+                    float relativeNormal = Vector3.Dot(relativeVelocity, collision.normal);
+                    float e = Mathf.Min(Cubes[i].rigidBody.Restitution, Spheres[k].rigidBody.Restitution);
+                    float j = (-(1 + e) * (relativeNormal)) / ((1 / Spheres[k].rigidBody.Mass) + (1 / Cubes[i].rigidBody.Mass));
+                    //Cubes[i].rigidBody.Velocity = Cubes[i].rigidBody.Velocity - ((j / Cubes[i].rigidBody.Mass) * collision.normal);
+                    Spheres[k].rigidBody.Velocity = Spheres[k].rigidBody.Velocity - ((j / Spheres[k].rigidBody.Mass) * collision.normal);
 
+                    Vector3 t = relativeVelocity - (relativeNormal * collision.normal);
+                    float jt = (-(1 + e) * (Vector3.Dot(relativeVelocity, t))) / ((1 / Spheres[k].rigidBody.Mass) + (1 / Cubes[i].rigidBody.Mass));
+                    float friction = Mathf.Sqrt(Spheres[k].rigidBody.Friction * Cubes[i].rigidBody.Friction);
+                    jt = Mathf.Min(jt, j * friction);
+
+                    //Cubes[i].rigidBody.Velocity = Cubes[i].rigidBody.Velocity + ((jt / Cubes[i].rigidBody.Mass) * collision.normal);
+                    //Spheres[k].rigidBody.Velocity = Spheres[k].rigidBody.Velocity - ((jt / Spheres[k].rigidBody.Mass) * collision.normal);
+                }
             }
         }
     }
@@ -93,7 +110,7 @@ public class CollisionManager : MonoBehaviour
         return false;
     }
 
-    private bool SphereAABBCheck(BallBehaviour Sphere, CubeBehaviour Cube)
+    private Manifold SphereAABBCheck(BallBehaviour Sphere, CubeBehaviour Cube)
     {
         GameObject sphere = Sphere.gameObject;
         GameObject cube = Cube.gameObject;
@@ -114,16 +131,44 @@ public class CollisionManager : MonoBehaviour
         float aY = sphere.transform.position.y;
         float aZ = sphere.transform.position.z;
 
-        var x = Mathf.Max(min.x, Mathf.Min(aX, max.x));
-        var y = Mathf.Max(min.y, Mathf.Min(aY, max.y));
-        var z = Mathf.Max(min.z, Mathf.Min(aZ, max.z));
+        float x = Mathf.Max(min.x, Mathf.Min(aX, max.x));
+        float y = Mathf.Max(min.y, Mathf.Min(aY, max.y));
+        float z = Mathf.Max(min.z, Mathf.Min(aZ, max.z));
 
-        var distance = Mathf.Sqrt((x - aX) * (x - aX) +
+        float distance = Mathf.Sqrt((x - aX) * (x - aX) +
             (y - aY) * (y - aY) +
             (z - aZ) * (z - aZ));
 
-        float radius = Vector3.Scale(aB.extents, sphere.transform.localScale).magnitude;
+        Vector3 relativeVelocity = Cube.rigidBody.Velocity - Sphere.rigidBody.Velocity;
 
-        return distance < Vector3.Scale(aB.extents, sphere.transform.localScale).magnitude;
+        Vector3 pos1 = sphere.transform.position;
+        Vector3 pos2 = cube.transform.position;
+        Vector3 size1 = sphere.transform.localScale;
+        Vector3 size2 = cube.transform.localScale;
+
+        float testX = pos1.x;
+        float testY = pos1.y;
+        float testZ = pos1.z;
+
+        if (pos1.x < pos2.x - size2.x / 2) testX = pos2.x - size2.x / 2; // left edge
+        else if (pos1.x > pos2.x + size2.x / 2) testX = pos2.x + size2.x / 2; // right edge
+
+        if (pos1.y < pos2.y - size2.y / 2) testY = pos2.y - size2.y / 2; // top edge
+        else if (pos1.y > pos2.y + size2.y / 2) testY = pos2.y + size2.y / 2;
+
+        if (pos1.z < pos2.z - size2.z / 2) testZ = pos2.z - size2.z / 2;
+        else if (pos1.z > pos2.z + size2.z / 2) testZ = pos2.z + size2.z / 2;
+
+        Vector3 point = new Vector3(testX, testY, testZ);
+        Vector3 normal = pos1 - point;
+
+        float radius = sphere.transform.localScale.x * 0.5f; // Vector3.Scale(aB.extents, sphere.transform.localScale).magnitude;
+        Manifold result = new Manifold();
+        result.normal = normal.normalized;
+        result.result = distance < radius;
+
+        //Debug.Log("Radius: " + radius);                                   
+
+        return result;
     }
 }

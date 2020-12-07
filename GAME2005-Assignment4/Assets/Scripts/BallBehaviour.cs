@@ -14,6 +14,8 @@ public class BallBehaviour : MonoBehaviour
         public Vector3 Velocity;
         public Vector3 Acceleration;
         public float Mass;
+        public float Restitution;
+        public float Friction;
     }
 
     public RigidBody rigidBody = new RigidBody();
@@ -31,8 +33,10 @@ public class BallBehaviour : MonoBehaviour
         //Debug.Log("Direction = " + forwardDirection);
         
         rigidBody.Velocity = new Vector3(0, 0, 0);
-        rigidBody.Acceleration = new Vector3(0, 0, 0);
-        rigidBody.Mass = 0;
+        rigidBody.Acceleration = new Vector3(0, -0.2f, 0);
+        rigidBody.Mass = 5;
+        rigidBody.Restitution = 0.8f;
+        rigidBody.Friction = 1;
 
         rigidBody.Velocity = forwardDirection * forwardVelocity;
     }

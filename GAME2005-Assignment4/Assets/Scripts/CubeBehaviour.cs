@@ -14,6 +14,8 @@ public class CubeBehaviour : MonoBehaviour
         public Vector3 Velocity;
         public Vector3 Acceleration;
         public float Mass;
+        public float Restitution;
+        public float Friction;
     }
 
     public RigidBody rigidBody = new RigidBody();
@@ -26,13 +28,16 @@ public class CubeBehaviour : MonoBehaviour
         collisionManager.Cubes.Add(this);
         rigidBody.Velocity = new Vector3(0, 0, 0);
         rigidBody.Acceleration = new Vector3(0, 0, 0);
-        rigidBody.Mass = 0;
+        rigidBody.Mass = 3;
+        rigidBody.Restitution = 0.5f;
+        rigidBody.Friction = 1;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        rigidBody.Velocity += rigidBody.Acceleration * Time.deltaTime;
+        transform.position += rigidBody.Velocity * Time.deltaTime;
     }
 
     private void OnDrawGizmos()

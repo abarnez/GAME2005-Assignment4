@@ -9,6 +9,9 @@ public class CollisionManager : MonoBehaviour
     public List<CubeBehaviour> Cubes;
     public List<BallBehaviour> Spheres;
 
+
+    public GameObject player;
+
     //sliders
     public Slider Velocity;
     public Slider Friction;
@@ -56,6 +59,11 @@ public class CollisionManager : MonoBehaviour
                 {
                     if (AABBCheck(Cubes[i], Cubes[j]))
                     {
+                        if (Cubes[i].CompareTag("Player") || Cubes[j].CompareTag("Player"))
+                        {
+                            Debug.Log("Player Colliding Cube");
+                            player.transform.position  -= new Vector3(0.08f,0.0f,0.08f);
+                        } 
                         Debug.Log("Colliding Cube");
                     }
                 }

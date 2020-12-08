@@ -7,44 +7,30 @@ public class BallBehaviour : MonoBehaviour
     private Vector3 forwardDirection;
     private float forwardVelocity;
 
-    private GameObject collisionManagerObject;
-    private CollisionManager collisionManager;
-    public struct RigidBody
-    {
-        public Vector3 Velocity;
-        public Vector3 Acceleration;
-        public float Mass;
-        public float Restitution;
-        public float Friction;
-    }
-
-    public RigidBody rigidBody = new RigidBody();
+    public GameManager.RigidBody rigidBody = new GameManager.RigidBody();
 
     // Start is called before the first frame update
     void Start()
     {
         forwardDirection = GameObject.FindWithTag("Player").transform.forward;
+        GameManager.collisionManager.Spheres.Add(this);
 
-        collisionManagerObject = GameObject.FindWithTag("CollisionManager");
-        collisionManager = collisionManagerObject.GetComponent<CollisionManager>();
-        collisionManager.Spheres.Add(this);
-
-        forwardVelocity = 3;
+        forwardVelocity = 5;
         //Debug.Log("Direction = " + forwardDirection);
         
-        rigidBody.Velocity = new Vector3(0, 0, 0);
-        rigidBody.Acceleration = new Vector3(0, -2, 0);
-        rigidBody.Mass = 5;
-        rigidBody.Restitution = 0.8f;
-        rigidBody.Friction = 1;
+        rigidBody.velocity = new Vector3(0, 0, 0);
+        rigidBody.acceleration = new Vector3(0, -1, 0);
+        rigidBody.mass = 3;
+        rigidBody.restitution = 0.8f;
+        rigidBody.friction = 0.8f;
 
-        rigidBody.Velocity = forwardDirection * forwardVelocity;
+        rigidBody.velocity = forwardDirection * forwardVelocity;
     }
 
     // Update is called once per frame
     void Update()
     {
-        rigidBody.Velocity += rigidBody.Acceleration * Time.deltaTime;
-        transform.position += rigidBody.Velocity * Time.deltaTime;
+        rigidBody.velocity += rigidBody.acceleration * Time.deltaTime;
+        transform.position += rigidBody.velocity * Time.deltaTime;
     }
 }

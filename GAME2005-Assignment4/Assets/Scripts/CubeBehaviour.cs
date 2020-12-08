@@ -9,6 +9,8 @@ public class CubeBehaviour : MonoBehaviour
     private GameObject collisionManagerObject;
     private CollisionManager collisionManager;
 
+    public bool Anchored = false;
+
     public struct RigidBody
     {
         public Vector3 Velocity;
@@ -28,7 +30,7 @@ public class CubeBehaviour : MonoBehaviour
         collisionManager.Cubes.Add(this);
         rigidBody.Velocity = new Vector3(0, 0, 0);
         rigidBody.Acceleration = new Vector3(0, 0, 0);
-        rigidBody.Mass = 3;
+        rigidBody.Mass = 1;
         rigidBody.Restitution = 0.5f;
         rigidBody.Friction = 1;
     }

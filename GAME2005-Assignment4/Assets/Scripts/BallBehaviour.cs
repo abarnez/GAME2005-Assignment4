@@ -33,7 +33,7 @@ public class BallBehaviour : MonoBehaviour
         //Debug.Log("Direction = " + forwardDirection);
         
         rigidBody.Velocity = new Vector3(0, 0, 0);
-        rigidBody.Acceleration = new Vector3(0, -0.2f, 0);
+        rigidBody.Acceleration = new Vector3(0, -2, 0);
         rigidBody.Mass = 5;
         rigidBody.Restitution = 0.8f;
         rigidBody.Friction = 1;

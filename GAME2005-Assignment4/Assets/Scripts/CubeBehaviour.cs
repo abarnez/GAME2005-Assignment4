@@ -8,15 +8,26 @@ public class CubeBehaviour : MonoBehaviour
 {
     public GameManager.RigidBody rigidBody = new GameManager.RigidBody();
 
+    public bool Anchored;
+
     // Start is called before the first frame update
     void Start()
     {
-        GameManager.collisionManager.Cubes.Add(this);
-        rigidBody.velocity = new Vector3(0, 0, 0);
+        StartCoroutine(waiter());
+        //GameManager.collisionManager.Cubes.Add(this);
+
+        rigidBody.velocity = new Vector3(0, !Anchored ? -1 : 0, 0);
         rigidBody.acceleration = new Vector3(0, 0, 0);
-        rigidBody.mass = 1;
+        rigidBody.mass = 5;
         rigidBody.restitution = 0.8f;
         rigidBody.friction = 0.6f;
+        rigidBody.anchored = Anchored;
+    }
+    IEnumerator waiter()
+    {
+        yield return new WaitWhile(() => GameManager.collisionManager != null);
+
+        GameManager.collisionManager.Cubes.Add(this);
     }
 
     // Update is called once per frame

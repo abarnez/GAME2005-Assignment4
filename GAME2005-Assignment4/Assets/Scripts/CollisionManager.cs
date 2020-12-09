@@ -68,9 +68,9 @@ public class CollisionManager : MonoBehaviour
                         {
                             CalculateImpulse(collision, Cubes[i].rigidBody, Cubes[j].rigidBody, out Vector3 velocity1, out Vector3 velocity2);
 
-                            if (!Cubes[i].CompareTag("Anchored"))
+                            if (!Cubes[i].rigidBody.anchored)
                                 Cubes[i].rigidBody.velocity = velocity1;
-                            if (!Cubes[j].CompareTag("Anchored"))
+                            if (!Cubes[j].rigidBody.anchored)
                                 Cubes[j].rigidBody.velocity = velocity2;
                         }
                     }
@@ -85,7 +85,7 @@ public class CollisionManager : MonoBehaviour
                     CalculateImpulse(collision, Spheres[k].rigidBody, Cubes[i].rigidBody, out Vector3 velocity1, out Vector3 velocity2);
 
                     Spheres[k].rigidBody.velocity = velocity1;
-                    if(!Cubes[i].CompareTag("Anchored"))
+                    if(!Cubes[i].rigidBody.anchored)
                         Cubes[i].rigidBody.velocity = velocity2;
 
                 }
@@ -151,9 +151,6 @@ public class CollisionManager : MonoBehaviour
         GameObject sphere = Sphere.gameObject;
         GameObject cube = Cube.gameObject;
 
-        // Can Access Cube and Sphere's rigidbody properties here.
-        //Debug.Log(Sphere.rigidBody.Velocity);
-
         MeshFilter aMF = sphere.GetComponent<MeshFilter>();
         MeshFilter bMF = cube.GetComponent<MeshFilter>();
 
@@ -198,12 +195,10 @@ public class CollisionManager : MonoBehaviour
         Vector3 point = new Vector3(testX, testY, testZ);
         Vector3 normal = pos1 - point;
 
-        float radius = sphere.transform.localScale.x * 0.5f; // Vector3.Scale(aB.extents, sphere.transform.localScale).magnitude;
+        float radius = sphere.transform.localScale.x * 0.5f;
         Manifold result = new Manifold();
         result.normal = normal.normalized;
-        result.result = distance < radius;
-
-        //Debug.Log("Radius: " + radius);                                   
+        result.result = distance < radius;                            
 
         return result;
     }
@@ -307,9 +302,6 @@ public class CollisionManager : MonoBehaviour
             diffMove2 = new Vector3(0.0f, 0.0f, result.normal.z * (difZ + Mathf.Abs(vel2.z) + 0.0f) * propK2);
         }
 
-        //obj1.transform.position += Cube1.rigidBody.Velocity - diffMove1;
-        //obj2.transform.position += Cube2.rigidBody.Velocity - diffMove2;
-
         return result;
     }
     void CalculateImpulse(Manifold collision, GameManager.RigidBody rigidBody1, GameManager.RigidBody rigidBody2, out Vector3 velocity1, out Vector3 velocity2)
@@ -330,42 +322,4 @@ public class CollisionManager : MonoBehaviour
         velocity2 = rigidBody2.velocity + ((jt / rigidBody2.mass) * collision.normal);
         velocity1 = rigidBody1.velocity - ((jt / rigidBody1.mass) * collision.normal);
     }
-
-    /* OLD ---------------------------------------------------
-     * void CalculateImpulse(Manifold collision, float mass1, float mass2, float rest1, float rest2, float frict1, float frict2,
-        Vector3 vel1, Vector3 vel2, bool anchored1, bool anchored2, out Vector3 velocity1, out Vector3 velocity2)
-    {
-        if (anchored1 && anchored2)
-        {
-            velocity1 = vel1;
-            velocity2 = vel2;
-            return;
-        }
-        Vector3 relativeVelocity = vel2 - vel1;
-        float relativeNormal = Vector3.Dot(relativeVelocity, collision.normal);
-        float e = Mathf.Min(rest2, rest1);
-        float inverseMass1 = 1 / mass1;
-        float inverseMass2 = 1 / mass2;
-        float j = (-(1 + e) * (relativeNormal)) / (inverseMass1 + inverseMass2);
-
-        // if (!Cubes[i].Anchored)
-        //     Cubes[i].rigidBody.Velocity = Cubes[i].rigidBody.Velocity + ((j / Cubes[i].rigidBody.Mass) * collision.normal);
-        //Spheres[k].rigidBody.Velocity = Spheres[k].rigidBody.Velocity - ((j / Spheres[k].rigidBody.Mass) * collision.normal);
-
-        Vector3 t = relativeVelocity - (relativeNormal * collision.normal);
-        float jt = (-(1 + e) * (Vector3.Dot(relativeVelocity, t))) / (inverseMass1 + inverseMass2);
-        float friction = Mathf.Sqrt(frict1 * frict2);
-        jt = Mathf.Max(jt, -j * friction);
-        jt = Mathf.Min(jt, j * friction);
-
-        if (!anchored2)
-            velocity2 = vel2 + ((jt / mass2) * collision.normal);
-        else
-            velocity2 = vel2;
-
-        if (!anchored1)
-            velocity1 = vel1 - ((jt / mass1) * collision.normal);
-        else
-            velocity1 = vel1;
-    }*/
 }

@@ -15,14 +15,14 @@ public class BallBehaviour : MonoBehaviour
         forwardDirection = GameObject.FindWithTag("Player").transform.forward;
         GameManager.collisionManager.Spheres.Add(this);
 
-        forwardVelocity = 5;
-        //Debug.Log("Direction = " + forwardDirection);
+        forwardVelocity = 10;
         
         rigidBody.velocity = new Vector3(0, 0, 0);
         rigidBody.acceleration = new Vector3(0, -1, 0);
-        rigidBody.mass = 3;
+        rigidBody.mass = 1;
         rigidBody.restitution = 0.8f;
         rigidBody.friction = 0.8f;
+        rigidBody.anchored = false;
 
         rigidBody.velocity = forwardDirection * forwardVelocity;
     }

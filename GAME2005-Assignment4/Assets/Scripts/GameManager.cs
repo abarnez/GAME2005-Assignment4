@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
         public float mass;
         public float restitution;
         public float friction;
+        public bool anchored;
     }
 
     public static CollisionManager collisionManager;

@@ -448,7 +448,19 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 513985125}
+        m_TargetAssemblyTypeName: SliderTextScript, Assembly-CSharp
+        m_MethodName: updateText
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &155732569
 GameObject:
   m_ObjectHideFlags: 0
@@ -499,7 +511,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -940,7 +952,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -980,6 +992,7 @@ GameObject:
   - component: {fileID: 513985122}
   - component: {fileID: 513985124}
   - component: {fileID: 513985123}
+  - component: {fileID: 513985125}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -1019,7 +1032,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1039,7 +1052,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Velocity
+  m_Text: 'Velocity: 0.00 m/s
 
 '
 --- !u!222 &513985124
@@ -1050,6 +1063,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 513985121}
   m_CullTransparentMesh: 0
+--- !u!114 &513985125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 513985121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 851c78940e729664d8f70661cbfc6b8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textPrefix: 'Velocity:'
+  textSuffix: m/s
 --- !u!1 &540075822
 GameObject:
   m_ObjectHideFlags: 0
@@ -1358,6 +1385,7 @@ GameObject:
   - component: {fileID: 640738410}
   - component: {fileID: 640738412}
   - component: {fileID: 640738411}
+  - component: {fileID: 640738413}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -1397,7 +1425,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1417,7 +1445,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Mass
+  m_Text: 'Mass: 0.00 kg
 
 '
 --- !u!222 &640738412
@@ -1428,6 +1456,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 640738409}
   m_CullTransparentMesh: 0
+--- !u!114 &640738413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 640738409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 851c78940e729664d8f70661cbfc6b8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textPrefix: 'Mass:'
+  textSuffix: kg
 --- !u!1 &654982696
 GameObject:
   m_ObjectHideFlags: 0
@@ -3159,7 +3201,19 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1942023768}
+        m_TargetAssemblyTypeName: SliderTextScript, Assembly-CSharp
+        m_MethodName: updateText
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1634872224
 GameObject:
   m_ObjectHideFlags: 0
@@ -3536,6 +3590,7 @@ GameObject:
   - component: {fileID: 1942023765}
   - component: {fileID: 1942023767}
   - component: {fileID: 1942023766}
+  - component: {fileID: 1942023768}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -3575,7 +3630,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3595,7 +3650,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Friction
+  m_Text: 'Friction: 0.00
 
 '
 --- !u!222 &1942023767
@@ -3606,6 +3661,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1942023764}
   m_CullTransparentMesh: 0
+--- !u!114 &1942023768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1942023764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 851c78940e729664d8f70661cbfc6b8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textPrefix: 'Friction:'
+  textSuffix: 
 --- !u!1 &1967975196
 GameObject:
   m_ObjectHideFlags: 0
@@ -3731,7 +3800,19 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 640738413}
+        m_TargetAssemblyTypeName: SliderTextScript, Assembly-CSharp
+        m_MethodName: updateText
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2028274113
 GameObject:
   m_ObjectHideFlags: 0

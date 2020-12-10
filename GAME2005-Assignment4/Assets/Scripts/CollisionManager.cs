@@ -27,6 +27,7 @@ public class CollisionManager : MonoBehaviour
     public float FrictionCoef;
     public float MomentumCoef;
 
+<<<<<<< HEAD
     private static CollisionManager _instance;
     public static CollisionManager Instance
     {
@@ -46,6 +47,9 @@ public class CollisionManager : MonoBehaviour
             return _instance;
         }
     }
+=======
+    private 
+>>>>>>> aef5a84473f224af81611b3ec809fe51dd27e198
 
     struct Manifold
     {
@@ -56,9 +60,18 @@ public class CollisionManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        
     }
 
+    public void stopPlayer()
+    {
+        PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
+        playerMovement.canMove = false;
+        if (playerMovement.backUp)
+        {
+            playerMovement.canMove = true;
+        }
+    }
     // Update is called once per frame
     void Update()
     {
@@ -79,7 +92,10 @@ public class CollisionManager : MonoBehaviour
                     {
                         if (Cubes[i].CompareTag("Player") || Cubes[j].CompareTag("Player"))
                         {
-                            //player.transform.position -= new Vector3(0.08f, 0.0f, 0.08f);
+                            if (Cubes[i].CompareTag("Anchored") || Cubes[j].CompareTag("Anchored"))
+                            {
+                                stopPlayer();                               
+                            }
                         }
                         else
                         {

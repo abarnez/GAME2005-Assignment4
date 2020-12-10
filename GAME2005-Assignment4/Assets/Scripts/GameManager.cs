@@ -15,12 +15,10 @@ public class GameManager : MonoBehaviour
         public bool anchored;
     }
 
-    public static CollisionManager collisionManager;
-
     // Start is called before the first frame update
     void Start()
     {
-        collisionManager = GameObject.FindWithTag("CollisionManager").GetComponent<CollisionManager>();
+
     }
 
     // Update is called once per frame

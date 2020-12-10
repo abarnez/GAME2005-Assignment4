@@ -6,6 +6,9 @@ TagManager:
   tags:
   - CollisionManager
   - Anchored
+  - Floor
+  - Wall
+  - Box
   layers:
   - Default
   - TransparentFX

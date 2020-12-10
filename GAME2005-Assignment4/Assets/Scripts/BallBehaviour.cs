@@ -12,16 +12,15 @@ public class BallBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        forwardDirection = GameObject.FindWithTag("Player").transform.forward;
-        GameManager.collisionManager.Spheres.Add(this);
+        CollisionManager.Instance.Spheres.Add(this);
 
+        forwardDirection = GameObject.FindWithTag("Player").transform.forward;
         forwardVelocity = 12;
-        
         rigidBody.velocity = new Vector3(0, 0, 0);
         rigidBody.acceleration = new Vector3(0, -0.5f, 0);
         rigidBody.mass = 1;
-        rigidBody.restitution = 0.8f;
-        rigidBody.friction = 0.8f;
+        rigidBody.restitution = 1;
+        rigidBody.friction = 0.5f;
         rigidBody.anchored = false;
 
         rigidBody.velocity = forwardDirection * forwardVelocity;

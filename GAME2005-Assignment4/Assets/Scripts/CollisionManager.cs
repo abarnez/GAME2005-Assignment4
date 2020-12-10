@@ -85,7 +85,7 @@ public class CollisionManager : MonoBehaviour
                     CalculateImpulse(collision, Spheres[k].rigidBody, Cubes[i].rigidBody, out Vector3 velocity1, out Vector3 velocity2);
 
                     Spheres[k].rigidBody.velocity = velocity1;
-                    if(!Cubes[i].rigidBody.anchored)
+                    if (!Cubes[i].rigidBody.anchored)
                         Cubes[i].rigidBody.velocity = velocity2;
 
                 }

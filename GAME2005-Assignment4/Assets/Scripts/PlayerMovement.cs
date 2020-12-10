@@ -110,7 +110,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (Time.frameCount - lastFrame >= 250)
             {
-                GameObject.Instantiate(Ball, FiringOrigin.position, FiringOrigin.rotation);
+                GameObject.Instantiate(Ball, FiringOrigin.position, FiringOrigin.transform.parent.rotation);
                 lastFrame = Time.frameCount;
             }
         }

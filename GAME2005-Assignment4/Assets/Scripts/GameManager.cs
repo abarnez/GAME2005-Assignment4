@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class GameManager : MonoBehaviour
 {
+
     public struct RigidBody
     {
         public Vector3 velocity;

@@ -27,7 +27,7 @@ public class CollisionManager : MonoBehaviour
     public float FrictionCoef;
     public float MomentumCoef;
 
-    public static CollisionManager _instance;
+    private static CollisionManager _instance;
     public static CollisionManager Instance
     {
         get
@@ -84,18 +84,12 @@ public class CollisionManager : MonoBehaviour
                         else
                         {
                             CalculateImpulse(collision, Cubes[i].rigidBody, Cubes[j].rigidBody, out Vector3 velocity1, out Vector3 velocity2);
+
                             if (!Cubes[i].rigidBody.anchored)
-                            {
                                 Cubes[i].rigidBody.velocity = velocity1;
-                                if(Cubes[i].CompareTag("Box") && Cubes[j].CompareTag("Wall"))
-                                    Debug.Log("Found cube " + Cubes[i].name + " collision");
-                            }
+
                             if (!Cubes[j].rigidBody.anchored)
-                            {
                                 Cubes[j].rigidBody.velocity = velocity2;
-                                if (Cubes[j].CompareTag("Box") && Cubes[i].CompareTag("Wall"))
-                                    Debug.Log("Found cube " + Cubes[j].name + " collision");
-                            }
                         }
                     }
                 }
@@ -211,7 +205,7 @@ public class CollisionManager : MonoBehaviour
         else if (pos1.x > pos2.x + size2.x / 2) testX = pos2.x + size2.x / 2; // right edge
 
         if (pos1.y < pos2.y - size2.y / 2) testY = pos2.y - size2.y / 2; // top edge
-        else if (pos1.y > pos2.y + size2.y / 2) testY = pos2.y + size2.y / 2; // back edge
+        else if (pos1.y > pos2.y + size2.y / 2) testY = pos2.y + size2.y / 2; // bottom edge
 
         if (pos1.z < pos2.z - size2.z / 2) testZ = pos2.z - size2.z / 2; // front edge
         else if (pos1.z > pos2.z + size2.z / 2) testZ = pos2.z + size2.z / 2; // back edge

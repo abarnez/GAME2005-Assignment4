@@ -47,7 +47,7 @@ public class PlayerMovement : MonoBehaviour
         
         // Press Left Shift to run
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        Debug.Log(Input.GetAxis("Vertical"));
+        //Debug.Log(Input.GetAxis("Vertical"));
         float curSpeedX = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Vertical") : 0;
         float curSpeedY = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Horizontal") : 0;
         float movementDirectionY = moveDirection.y;

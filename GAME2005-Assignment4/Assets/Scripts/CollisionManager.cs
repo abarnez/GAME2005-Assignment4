@@ -27,7 +27,6 @@ public class CollisionManager : MonoBehaviour
     public float FrictionCoef;
     public float MomentumCoef;
 
-<<<<<<< HEAD
     private static CollisionManager _instance;
     public static CollisionManager Instance
     {
@@ -47,9 +46,6 @@ public class CollisionManager : MonoBehaviour
             return _instance;
         }
     }
-=======
-    private 
->>>>>>> aef5a84473f224af81611b3ec809fe51dd27e198
 
     struct Manifold
     {
@@ -92,9 +88,12 @@ public class CollisionManager : MonoBehaviour
                     {
                         if (Cubes[i].CompareTag("Player") || Cubes[j].CompareTag("Player"))
                         {
-                            if (Cubes[i].CompareTag("Anchored") || Cubes[j].CompareTag("Anchored"))
+                            if (!Cubes[i].CompareTag("Floor") && !Cubes[j].CompareTag("Floor"))
                             {
-                                stopPlayer();                               
+                                if (Cubes[i].CompareTag("Anchored") || Cubes[j].CompareTag("Anchored"))
+                                {
+                                    stopPlayer();
+                                }
                             }
                         }
                         else

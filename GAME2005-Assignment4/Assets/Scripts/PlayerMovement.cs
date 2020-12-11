@@ -27,7 +27,6 @@ public class PlayerMovement : MonoBehaviour
 
     [HideInInspector]
     public bool canMove = true;
-    public bool backUp;
 
     void Start()
     {
@@ -44,26 +43,13 @@ public class PlayerMovement : MonoBehaviour
         // We are grounded, so recalculate move direction based on axes
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
-        
         // Press Left Shift to run
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        //Debug.Log(Input.GetAxis("Vertical"));
         float curSpeedX = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Vertical") : 0;
         float curSpeedY = canMove ? (isRunning ? runningSpeed : walkingSpeed) * Input.GetAxis("Horizontal") : 0;
         float movementDirectionY = moveDirection.y;
         moveDirection = (forward * curSpeedX) + (right * curSpeedY);
 
-        if(Input.GetAxis("Vertical") == -1.0f) 
-        {
-            backUp = true;
-            canMove = true;
-        }
-        else
-        {
-            backUp = false;
-        }
-
-        /*
         if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
         {
             moveDirection.y = jumpSpeed;
@@ -72,7 +58,7 @@ public class PlayerMovement : MonoBehaviour
         {
             moveDirection.y = movementDirectionY;
         }
-        */
+
         // Apply gravity. Gravity is multiplied by deltaTime twice (once here, and once below
         // when the moveDirection is multiplied by deltaTime). This is because gravity should be applied
         // as an acceleration (ms^-2)

@@ -18,8 +18,8 @@ public class BallBehaviour : MonoBehaviour
         rigidBody.velocity = new Vector3(0, 0, 0);
         rigidBody.acceleration = new Vector3(0, gravity, 0);
         rigidBody.mass = 1;
-        rigidBody.restitution = 1;
-        rigidBody.friction = 0.5f;
+        rigidBody.restitution = 0.8f;
+        rigidBody.friction = 0.8f;
         rigidBody.anchored = false;
 
         rigidBody.velocity = transform.forward * forwardSpeed;

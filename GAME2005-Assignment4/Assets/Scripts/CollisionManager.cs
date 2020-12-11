@@ -59,7 +59,7 @@ public class CollisionManager : MonoBehaviour
         
     }
 
-    public void stopPlayer()
+    /*public void stopPlayer()
     {
         PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
         playerMovement.canMove = false;
@@ -67,7 +67,7 @@ public class CollisionManager : MonoBehaviour
         {
             playerMovement.canMove = true;
         }
-    }
+    }*/
     // Update is called once per frame
     void Update()
     {
@@ -76,10 +76,11 @@ public class CollisionManager : MonoBehaviour
         velocity = Velocity.value;
         friction = Friction.value;
         mass = Mass.value;
-       
-        for(int i = 0; i < Cubes.Count; i++)
+
+
+        for (int i = 0; i < Cubes.Count; i++)
         {
-            for(int j = i + 1; j < Cubes.Count; j++)
+            for (int j = i + 1; j < Cubes.Count; j++)
             {
                 if (i != j)
                 {
@@ -88,13 +89,7 @@ public class CollisionManager : MonoBehaviour
                     {
                         if (Cubes[i].CompareTag("Player") || Cubes[j].CompareTag("Player"))
                         {
-                            if (!Cubes[i].CompareTag("Floor") && !Cubes[j].CompareTag("Floor"))
-                            {
-                                if (Cubes[i].CompareTag("Anchored") || Cubes[j].CompareTag("Anchored"))
-                                {
-                                    stopPlayer();
-                                }
-                            }
+                            //player.transform.position -= new Vector3(0.08f, 0.0f, 0.08f);
                         }
                         else
                         {
@@ -102,14 +97,13 @@ public class CollisionManager : MonoBehaviour
 
                             if (!Cubes[i].rigidBody.anchored)
                                 Cubes[i].rigidBody.velocity = velocity1;
-
                             if (!Cubes[j].rigidBody.anchored)
                                 Cubes[j].rigidBody.velocity = velocity2;
                         }
                     }
                 }
             }
-            for(int k = 0; k < Spheres.Count; k++)
+            for (int k = 0; k < Spheres.Count; k++)
             {
                 if (Cubes[i].CompareTag("Player")) continue;
                 Manifold collision = SphereAABBCheck(Spheres[k], Cubes[i]);
@@ -220,10 +214,10 @@ public class CollisionManager : MonoBehaviour
         else if (pos1.x > pos2.x + size2.x / 2) testX = pos2.x + size2.x / 2; // right edge
 
         if (pos1.y < pos2.y - size2.y / 2) testY = pos2.y - size2.y / 2; // top edge
-        else if (pos1.y > pos2.y + size2.y / 2) testY = pos2.y + size2.y / 2; // bottom edge
+        else if (pos1.y > pos2.y + size2.y / 2) testY = pos2.y + size2.y / 2;
 
-        if (pos1.z < pos2.z - size2.z / 2) testZ = pos2.z - size2.z / 2; // front edge
-        else if (pos1.z > pos2.z + size2.z / 2) testZ = pos2.z + size2.z / 2; // back edge
+        if (pos1.z < pos2.z - size2.z / 2) testZ = pos2.z - size2.z / 2;
+        else if (pos1.z > pos2.z + size2.z / 2) testZ = pos2.z + size2.z / 2;
 
         Vector3 point = new Vector3(testX, testY, testZ);
         Vector3 normal = pos1 - point;
@@ -231,7 +225,7 @@ public class CollisionManager : MonoBehaviour
         float radius = sphere.transform.localScale.x * 0.5f;
         Manifold result = new Manifold();
         result.normal = normal.normalized;
-        result.result = distance < radius;                            
+        result.result = distance < radius;
 
         return result;
     }

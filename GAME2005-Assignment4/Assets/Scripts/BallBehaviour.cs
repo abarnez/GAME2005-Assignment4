@@ -8,7 +8,10 @@ public class BallBehaviour : MonoBehaviour
     public float forwardSpeed;
     public float gravity;
 
-    public GameManager.RigidBody rigidBody = new GameManager.RigidBody();
+    public RigidBody rigidBody = new RigidBody();
+    public Contact contacts = new Contact();
+
+    private Vector3 startPosition;
 
     // Start is called before the first frame update
     void Start()
@@ -21,8 +24,11 @@ public class BallBehaviour : MonoBehaviour
         rigidBody.restitution = 0.8f;
         rigidBody.friction = 0.8f;
         rigidBody.anchored = false;
+        rigidBody.radius = transform.localScale.x * 0.5f;
 
         rigidBody.velocity = transform.forward * forwardSpeed;
+
+        startPosition = transform.position;
     }
 
     // Update is called once per frame
@@ -30,5 +36,19 @@ public class BallBehaviour : MonoBehaviour
     {
         rigidBody.velocity += rigidBody.acceleration * Time.deltaTime;
         transform.position += rigidBody.velocity * Time.deltaTime;
+        if(rigidBody.velocity.magnitude <= 0.1f)
+        {
+            RemoveObject();
+        }
+        else if(Vector3.Distance(transform.position, startPosition) >= 30)
+        {
+            RemoveObject();
+        }
+    }
+
+    void RemoveObject()
+    {
+        CollisionManager.Instance.Spheres.Remove(this);
+        GameObject.Destroy(this.gameObject);
     }
 }

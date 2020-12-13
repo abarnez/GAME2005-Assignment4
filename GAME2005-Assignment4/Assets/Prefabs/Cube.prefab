@@ -95,4 +95,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anchored: 0
-  gravity: 0
+  gravity: -1

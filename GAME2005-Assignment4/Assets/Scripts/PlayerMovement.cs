@@ -18,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
 
     public GameObject Ball;
     public Transform FiringOrigin;
+    public Transform[] Walls;
 
     private int lastFrame;
 
@@ -28,6 +29,8 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector]
     public bool canMove = true;
 
+    float maxX = 0, minX = 1000, minZ = 1000, maxZ = 0;
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -36,6 +39,20 @@ public class PlayerMovement : MonoBehaviour
         Cursor.visible = false;
         Sliders.SetActive(false);
         lastFrame = -250;
+
+        // Get all walls min and max X and Z to lock movement.
+        foreach(var wall in Walls)
+        {
+            if (wall.transform.position.x <= minX)
+                minX = wall.transform.position.x + 0.5f;
+            if(wall.transform.position.z <= minZ)
+                minZ = wall.transform.position.z + 0.5f;
+            if (wall.transform.position.z >= maxX)
+                maxX = wall.transform.position.x - 0.5f;
+            if (wall.transform.position.z >= maxZ)
+                maxZ = wall.transform.position.z - 0.5f;
+        }
+        Debug.Log("MinX: " + minX + " maxX: " + maxX + " minZ: " + minZ + " maxZ: " + maxZ);
     }
 
     void Update()
@@ -68,7 +85,21 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Move the controller
-        characterController.Move(moveDirection * Time.deltaTime);
+
+        // Locking movement... Check if next position is > max or < min and if so dont move in that direction.
+        Vector3 moveDir = (moveDirection * Time.deltaTime);
+        Vector3 nextPos = characterController.transform.position + moveDir;
+
+        if(nextPos.x <= minX || nextPos.x >= maxX)
+        {
+            moveDir.x = 0;
+        }
+        if(nextPos.z <= minZ || nextPos.z >= maxZ)
+        {
+            moveDir.z = 0;
+        }
+
+        characterController.Move(moveDir);
 
         // Player and Camera rotation
         if (canMove)

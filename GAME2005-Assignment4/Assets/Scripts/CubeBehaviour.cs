@@ -6,16 +6,18 @@ using UnityEngine;
 [System.Serializable]
 public class CubeBehaviour : MonoBehaviour
 {
-    public GameManager.RigidBody rigidBody = new GameManager.RigidBody();
+    public RigidBody rigidBody = new RigidBody();
 
     public bool anchored;
     public float gravity;
+
+    public Contact contacts = new Contact();
 
     // Start is called before the first frame update
     void Start()
     {
         CollisionManager.Instance.Cubes.Add(this);
-        rigidBody.velocity = new Vector3(0, !anchored? -0.5f : 0, 0);
+        rigidBody.velocity = new Vector3(0, 0, 0);
         rigidBody.acceleration = new Vector3(0, gravity, 0);
         rigidBody.mass = 5;
         rigidBody.restitution = 0.8f;

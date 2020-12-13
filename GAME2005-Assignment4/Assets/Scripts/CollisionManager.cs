@@ -84,21 +84,42 @@ public class CollisionManager : MonoBehaviour
             {
                 if (i != j)
                 {
-                    Manifold collision = AABBCheck(Cubes[i], Cubes[j]);
-                    if (collision.result)
+                    if (Cubes[i].CompareTag("Player") || Cubes[j].CompareTag("Player"))
                     {
-                        if (Cubes[i].CompareTag("Player") || Cubes[j].CompareTag("Player"))
+                        //player.transform.position -= new Vector3(0.08f, 0.0f, 0.08f);
+                    }
+                    else
+                    {
+                        Manifold collision = AABBCheck(Cubes[i], Cubes[j]);
+                        if (collision.result)
                         {
-                            //player.transform.position -= new Vector3(0.08f, 0.0f, 0.08f);
+                            CalculateImpulse(collision, Cubes[i].rigidBody, Cubes[j].rigidBody, out Vector3 velocity1, out Vector3 velocity2);
+                            if (!Cubes[i].contacts.cubes.Contains(Cubes[j]))
+                            {
+                                //CalculateImpulse(collision, Cubes[i].rigidBody, Cubes[j].rigidBody, out Vector3 velocity1, out Vector3 velocity2);
+                                Cubes[i].contacts.cubes.Add(Cubes[j]);
+
+                                // Add collision impulse
+                                if (!Cubes[i].rigidBody.anchored)
+                                    Cubes[i].rigidBody.velocity = velocity1;
+                                if (!Cubes[j].rigidBody.anchored)
+                                    Cubes[j].rigidBody.velocity = velocity2;
+                            }
+                            else
+                            {
+                                // resolve collision instead of impulse again.
+                                if (!Cubes[i].rigidBody.anchored)
+                                    Cubes[i].rigidBody.velocity = velocity1 * 0.999f;
+                                if (!Cubes[j].rigidBody.anchored)
+                                    Cubes[j].rigidBody.velocity = velocity2 * 0.999f;
+                            }
                         }
                         else
                         {
-                            CalculateImpulse(collision, Cubes[i].rigidBody, Cubes[j].rigidBody, out Vector3 velocity1, out Vector3 velocity2);
-
-                            if (!Cubes[i].rigidBody.anchored)
-                                Cubes[i].rigidBody.velocity = velocity1;
-                            if (!Cubes[j].rigidBody.anchored)
-                                Cubes[j].rigidBody.velocity = velocity2;
+                            if (Cubes[i].contacts.cubes.Contains(Cubes[j]))
+                            {
+                                Cubes[i].contacts.cubes.Remove(Cubes[j]);
+                            }
                         }
                     }
                 }
@@ -110,11 +131,61 @@ public class CollisionManager : MonoBehaviour
                 if (collision.result)
                 {
                     CalculateImpulse(collision, Spheres[k].rigidBody, Cubes[i].rigidBody, out Vector3 velocity1, out Vector3 velocity2);
+                    if (!Spheres[k].contacts.cubes.Contains(Cubes[i]))
+                    {
+                        Spheres[k].contacts.cubes.Add(Cubes[i]);
 
-                    Spheres[k].rigidBody.velocity = velocity1;
-                    if (!Cubes[i].rigidBody.anchored)
-                        Cubes[i].rigidBody.velocity = velocity2;
-
+                        // Add collision impulse
+                        Spheres[k].rigidBody.velocity = velocity1;
+                        if (!Cubes[i].rigidBody.anchored)
+                            Cubes[i].rigidBody.velocity = velocity2;
+                    }
+                    else
+                    {
+                        // resolve collision instead of impulse again.
+                        Spheres[k].rigidBody.velocity = velocity1 * 0.999f;
+                        if (!Cubes[i].rigidBody.anchored)
+                            Cubes[i].rigidBody.velocity = velocity2 * 0.999f;
+                    }
+                }
+                else
+                {
+                    if (Spheres[k].contacts.cubes.Contains(Cubes[i]))
+                    {
+                        Spheres[k].contacts.cubes.Remove(Cubes[i]);
+                    }
+                }
+            }
+        }
+        for(int i = 0; i < Spheres.Count; i++)
+        {
+            for(int j = 1; j < Spheres.Count; j++)
+            {
+                if(i != j)
+                {
+                    Manifold collision = SphereSphereCheck(Spheres[i], Spheres[j]);
+                    if(collision.result)
+                    {
+                        CalculateImpulse(collision, Spheres[i].rigidBody, Spheres[j].rigidBody, out Vector3 velocity1, out Vector3 velocity2);
+                        if(!Spheres[i].contacts.balls.Contains(Spheres[j]))
+                        {
+                            Spheres[i].contacts.balls.Add(Spheres[j]);
+                            Spheres[i].rigidBody.velocity = velocity1;
+                            Spheres[j].rigidBody.velocity = velocity2;
+                        }
+                        else
+                        {
+                            Spheres[i].rigidBody.velocity = velocity1 * 0.999f;
+                            Spheres[j].rigidBody.velocity = velocity2 * 0.999f;
+                        }
+                    }
+                    else
+                    {
+                        if (Spheres[i].contacts.balls.Contains(Spheres[j]))
+                        {
+                            Spheres[i].contacts.balls.Remove(Spheres[j]);
+                        }
+                    }
                 }
             }
         }
@@ -229,6 +300,28 @@ public class CollisionManager : MonoBehaviour
 
         return result;
     }
+    Manifold SphereSphereCheck(BallBehaviour ball1, BallBehaviour ball2)
+    {
+        Manifold result = new Manifold();
+        var pos1 = ball1.transform.position;
+        var pos2 = ball2.transform.position;
+        var distance = Mathf.Sqrt((pos1.x - pos2.x) * (pos1.x - pos2.x) +
+            (pos1.y - pos2.y) * (pos1.y - pos2.y) +
+            (pos1.z - pos2.z) * (pos1.z - pos2.z));
+        var combinedRadius = ball1.rigidBody.radius + ball2.rigidBody.radius;
+        if (distance > combinedRadius)
+        {
+            result.result = false;
+            return result;
+        }
+        var normal = (pos1 - pos2).normalized;
+        var penetrationDepth = ((distance * 0.5f) - combinedRadius);
+        var contactPoint = (pos1 - pos2).magnitude - (combinedRadius);
+        result.normal = normal;
+        result.result = true;
+
+        return result;
+    }
     Manifold SweptRectRect(CubeBehaviour Cube1, CubeBehaviour Cube2)
     {
         GameObject obj1 = Cube1.gameObject;
@@ -331,7 +424,41 @@ public class CollisionManager : MonoBehaviour
 
         return result;
     }
-    void CalculateImpulse(Manifold collision, GameManager.RigidBody rigidBody1, GameManager.RigidBody rigidBody2, out Vector3 velocity1, out Vector3 velocity2)
+
+    Manifold SweptSphereCheck(BallBehaviour P0, BallBehaviour P1, BallBehaviour Q0, BallBehaviour Q1, float outT)
+    {
+        Manifold result = new Manifold();
+        // Compute X, Y, a, b, and c
+        Vector3 X = P0.transform.position - Q0.transform.position;
+        Vector3 Y = P1.transform.position - P0.transform.position - (Q1.transform.position - Q0.transform.position);
+        float a = Vector3.Dot(Y, Y);
+        float b = 2 * Vector3.Dot(X, Y);
+        float sumRadii = P0.rigidBody.radius + Q0.rigidBody.radius;
+        float c = Vector3.Dot(X, X) - sumRadii * sumRadii;
+        // Solve discriminant
+        float disc = b * b - 4 * a * c;
+        if(disc < 0.0f)
+        {
+            result.result = false;
+            return result;
+        }
+        else
+        {
+            disc = Mathf.Sqrt(disc);
+            outT = (-b - disc) / (2 * a);
+            if (outT >= 0 && outT <= 0)
+            {
+                result.result = true;
+                return result;
+            }
+            else
+            {
+                result.result = false;
+                return result;
+            }
+        }
+    }
+    void CalculateImpulse(Manifold collision, RigidBody rigidBody1, RigidBody rigidBody2, out Vector3 velocity1, out Vector3 velocity2)
     {
         Vector3 relativeVelocity = rigidBody2.velocity - rigidBody1.velocity;
         float relativeNormal = Vector3.Dot(relativeVelocity, collision.normal);

@@ -13,11 +13,17 @@ public class BallBehaviour : MonoBehaviour
 
     private Vector3 startPosition;
 
+    public AudioSource shootSound;
+
     // Start is called before the first frame update
     void Start()
     {
-        CollisionManager.Instance.Spheres.Add(this);
+        Init();
+    }
 
+    public void Init()
+    {
+        CollisionManager.Instance.Spheres.Add(this);
         rigidBody.velocity = new Vector3(0, 0, 0);
         rigidBody.acceleration = new Vector3(0, gravity, 0);
         rigidBody.mass = 1;
@@ -25,10 +31,17 @@ public class BallBehaviour : MonoBehaviour
         rigidBody.friction = 0.8f;
         rigidBody.anchored = false;
         rigidBody.radius = transform.localScale.x * 0.5f;
-
         rigidBody.velocity = transform.forward * forwardSpeed;
 
         startPosition = transform.position;
+
+        shootSound.Play();
+    }
+
+    public void Deinit()
+    {
+        CollisionManager.Instance.Spheres.Remove(this);
+        gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -38,17 +51,11 @@ public class BallBehaviour : MonoBehaviour
         transform.position += rigidBody.velocity * Time.deltaTime;
         if(rigidBody.velocity.magnitude <= 0.1f)
         {
-            RemoveObject();
+            Deinit();
         }
-        else if(Vector3.Distance(transform.position, startPosition) >= 30)
+        else if(Vector3.Distance(transform.position, startPosition) >= 50)
         {
-            RemoveObject();
+            Deinit();
         }
-    }
-
-    void RemoveObject()
-    {
-        CollisionManager.Instance.Spheres.Remove(this);
-        GameObject.Destroy(this.gameObject);
     }
 }

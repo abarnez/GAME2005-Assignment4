@@ -9,10 +9,10 @@ public class SliderTextScript : MonoBehaviour
 
     public string textPrefix;
     public string textSuffix;
-    Text sliderText;
+    public Text sliderText;
     void Start()
     {
-        sliderText = GetComponent<Text>();
+        //sliderText = GetComponent<Text>();
     }
 
     // Update is called once per frame

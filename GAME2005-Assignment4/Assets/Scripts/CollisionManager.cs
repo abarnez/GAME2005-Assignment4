@@ -11,23 +11,24 @@ public class CollisionManager : MonoBehaviour
     public GameObject player;
 
     //sliders
-    public Slider Velocity;
-    public Slider Friction;
-    public Slider Mass;
-    public float velocity;
-    public float friction;
-    public float mass;
-    //lables
-   // public TMP_Text sMass;
-   // public TMP_Text sPositon;
+    public Slider cubeFrictionSlider;
+    public Slider restitutionSlider;
+    public Slider ballFrictionSlider;
+    public Slider cubeMassSlider;
+    public Slider ballMassSlider;
+
+    private float velocityScalar = 0.9999f;
+
+    //labels
+    // public TMP_Text sMass;
+    // public TMP_Text sPositon;
     public TMP_Text sVelocity;
    // public TMP_Text sAcceleration;
    // public TMP_Text sForce;
 
-    public float FrictionCoef;
-    public float MomentumCoef;
-
     private static CollisionManager _instance;
+
+    public AudioSource bounceSound;
     public static CollisionManager Instance
     {
         get
@@ -59,27 +60,55 @@ public class CollisionManager : MonoBehaviour
         
     }
 
-    /*public void stopPlayer()
-    {
-        PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
-        playerMovement.canMove = false;
-        if (playerMovement.backUp)
-        {
-            playerMovement.canMove = true;
-        }
-    }*/
     // Update is called once per frame
     void Update()
     {
         //sVelocity.text = "Velocity: " + velocity;
 
-        velocity = Velocity.value;
-        friction = Friction.value;
-        mass = Mass.value;
+        for (int i = 0; i < Spheres.Count; i++)
+        {
+            Spheres[i].rigidBody.friction = ballFrictionSlider.value;
+            Spheres[i].rigidBody.restitution = restitutionSlider.value;
+            Spheres[i].rigidBody.mass = ballMassSlider.value;
+            for (int j = 1; j < Spheres.Count; j++)
+            {
+                if (i != j && Spheres[i] != Spheres[j])
+                {
+                    Manifold collision = SphereSphereCheck(Spheres[i], Spheres[j]);
+                    if (collision.result)
+                    {
+                        CalculateImpulse(collision, Spheres[i].rigidBody, Spheres[j].rigidBody, out Vector3 velocity1, out Vector3 velocity2);
+                        if (!Spheres[i].contacts.balls.Contains(Spheres[j]))
+                        {
+                            Spheres[i].contacts.balls.Add(Spheres[j]);
+                            Spheres[i].rigidBody.velocity = velocity1;
+                            Spheres[j].rigidBody.velocity = velocity2;
 
+                            bounceSound.Play();
+                        }
+                        else
+                        {
+                            // resolve collision instead of impulse again.
+                            Spheres[i].rigidBody.velocity = velocity1 * velocityScalar;
+                            Spheres[j].rigidBody.velocity = velocity2 * velocityScalar;
+                        }
+                    }
+                    else
+                    {
+                        if (Spheres[i].contacts.balls.Contains(Spheres[j]))
+                        {
+                            Spheres[i].contacts.balls.Remove(Spheres[j]);
+                        }
+                    }
+                }
+            }
+        }
 
         for (int i = 0; i < Cubes.Count; i++)
         {
+            Cubes[i].rigidBody.friction = cubeFrictionSlider.value;
+            Cubes[i].rigidBody.restitution = restitutionSlider.value;
+            Cubes[i].rigidBody.mass = cubeMassSlider.value;
             for (int j = i + 1; j < Cubes.Count; j++)
             {
                 if (i != j)
@@ -109,9 +138,9 @@ public class CollisionManager : MonoBehaviour
                             {
                                 // resolve collision instead of impulse again.
                                 if (!Cubes[i].rigidBody.anchored)
-                                    Cubes[i].rigidBody.velocity = velocity1 * 0.999f;
+                                    Cubes[i].rigidBody.velocity = velocity1 * velocityScalar;
                                 if (!Cubes[j].rigidBody.anchored)
-                                    Cubes[j].rigidBody.velocity = velocity2 * 0.999f;
+                                    Cubes[j].rigidBody.velocity = velocity2 * velocityScalar;
                             }
                         }
                         else
@@ -139,13 +168,15 @@ public class CollisionManager : MonoBehaviour
                         Spheres[k].rigidBody.velocity = velocity1;
                         if (!Cubes[i].rigidBody.anchored)
                             Cubes[i].rigidBody.velocity = velocity2;
+
+                        bounceSound.Play();
                     }
                     else
                     {
                         // resolve collision instead of impulse again.
-                        Spheres[k].rigidBody.velocity = velocity1 * 0.999f;
+                        Spheres[k].rigidBody.velocity = velocity1 * velocityScalar;
                         if (!Cubes[i].rigidBody.anchored)
-                            Cubes[i].rigidBody.velocity = velocity2 * 0.999f;
+                            Cubes[i].rigidBody.velocity = velocity2 * velocityScalar;
                     }
                 }
                 else
@@ -153,38 +184,6 @@ public class CollisionManager : MonoBehaviour
                     if (Spheres[k].contacts.cubes.Contains(Cubes[i]))
                     {
                         Spheres[k].contacts.cubes.Remove(Cubes[i]);
-                    }
-                }
-            }
-        }
-        for(int i = 0; i < Spheres.Count; i++)
-        {
-            for(int j = 1; j < Spheres.Count; j++)
-            {
-                if(i != j)
-                {
-                    Manifold collision = SphereSphereCheck(Spheres[i], Spheres[j]);
-                    if(collision.result)
-                    {
-                        CalculateImpulse(collision, Spheres[i].rigidBody, Spheres[j].rigidBody, out Vector3 velocity1, out Vector3 velocity2);
-                        if(!Spheres[i].contacts.balls.Contains(Spheres[j]))
-                        {
-                            Spheres[i].contacts.balls.Add(Spheres[j]);
-                            Spheres[i].rigidBody.velocity = velocity1;
-                            Spheres[j].rigidBody.velocity = velocity2;
-                        }
-                        else
-                        {
-                            Spheres[i].rigidBody.velocity = velocity1 * 0.999f;
-                            Spheres[j].rigidBody.velocity = velocity2 * 0.999f;
-                        }
-                    }
-                    else
-                    {
-                        if (Spheres[i].contacts.balls.Contains(Spheres[j]))
-                        {
-                            Spheres[i].contacts.balls.Remove(Spheres[j]);
-                        }
                     }
                 }
             }

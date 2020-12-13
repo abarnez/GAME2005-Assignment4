@@ -20,6 +20,8 @@ public class PlayerMovement : MonoBehaviour
     public Transform FiringOrigin;
     public Transform[] Walls;
 
+    public AudioSource failSound;
+
     private int lastFrame;
 
     CharacterController characterController;
@@ -52,7 +54,6 @@ public class PlayerMovement : MonoBehaviour
             if (wall.transform.position.z >= maxZ)
                 maxZ = wall.transform.position.z - 0.5f;
         }
-        Debug.Log("MinX: " + minX + " maxX: " + maxX + " minZ: " + minZ + " maxZ: " + maxZ);
     }
 
     void Update()
@@ -141,8 +142,22 @@ public class PlayerMovement : MonoBehaviour
         {
             if (Time.frameCount - lastFrame >= 250)
             {
-                GameObject.Instantiate(Ball, FiringOrigin.position, FiringOrigin.transform.parent.rotation);
-                lastFrame = Time.frameCount;
+                var obj = ObjectPool.Instance.GetPooledObject();
+                if (obj != null)
+                {
+                    obj.SetActive(true);
+                    obj.transform.position = FiringOrigin.position;
+                    obj.transform.rotation = FiringOrigin.transform.parent.rotation;
+
+                    var objComp = obj.GetComponent<BallBehaviour>();
+                    if (objComp != null)
+                        objComp.Init();
+
+                    lastFrame = Time.frameCount;
+                }
+                else
+                    failSound.Play();
+
             }
         }
     }

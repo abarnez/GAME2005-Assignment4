@@ -18,14 +18,7 @@ public class CollisionManager : MonoBehaviour
     public Slider cubeMassSlider;
     public Slider ballMassSlider;
 
-    private float velocityScalar = 0.9999f;
-
-    //labels
-    // public TMP_Text sMass;
-    // public TMP_Text sPositon;
-    public TMP_Text sVelocity;
-   // public TMP_Text sAcceleration;
-   // public TMP_Text sForce;
+    private float velocityScalar = 0.999f;
 
     private static CollisionManager _instance;
 
@@ -142,9 +135,11 @@ public class CollisionManager : MonoBehaviour
                     Spheres[k].rigidBody.velocity = velocity1;
                     if (!Cubes[i].rigidBody.anchored)
                         Cubes[i].rigidBody.velocity = velocity2;
-                    Debug.Log("Speed projected: " + Vector3.Dot(Spheres[k].rigidBody.velocity, collision.normal));
-                    if (Vector3.Dot(Spheres[k].rigidBody.velocity,collision.normal) > 0.05f)
+                    //Debug.Log("Speed projected: " + Vector3.Dot(Spheres[k].rigidBody.velocity, collision.normal));
+                    if (Vector3.Dot(Spheres[k].rigidBody.velocity, collision.normal) > 0.05f)
                         bounceSound.Play();
+                    else
+                        Spheres[k].rigidBody.velocity *= velocityScalar;
                 }
             }
         }

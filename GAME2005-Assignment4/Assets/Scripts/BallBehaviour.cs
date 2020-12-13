@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class BallBehaviour : MonoBehaviour
@@ -14,6 +15,9 @@ public class BallBehaviour : MonoBehaviour
     private Vector3 startPosition;
 
     public AudioSource shootSound;
+
+    public TMP_Text floatingText;
+    private RectTransform textTransform;
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +39,8 @@ public class BallBehaviour : MonoBehaviour
 
         startPosition = transform.position;
 
+        textTransform = floatingText.GetComponent<RectTransform>();
+
         shootSound.Play();
     }
 
@@ -53,7 +59,10 @@ public class BallBehaviour : MonoBehaviour
         rigidBody.velocity += rigidBody.acceleration * Time.deltaTime;
         transform.position += rigidBody.velocity * Time.deltaTime;
 
-        if(rigidBody.velocity.magnitude <= 0.1f)
+        floatingText.text = rigidBody.velocity.magnitude.ToString("F2") + " m/s\n" + rigidBody.mass + " kg\nFriction " + rigidBody.friction;
+        textTransform.transform.rotation = Camera.main.transform.rotation;
+
+        if (rigidBody.velocity.magnitude <= 0.01f)
         {
             Deinit();
         }

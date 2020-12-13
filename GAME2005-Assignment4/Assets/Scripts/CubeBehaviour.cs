@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 [System.Serializable]
@@ -30,11 +31,15 @@ public class CubeBehaviour : MonoBehaviour
         rigidBody.restitution = 0.8f;
         rigidBody.friction = 0.6f;
         rigidBody.anchored = anchored;
+        //textTransform = floatingText.GetComponent<RectTransform>();
     }
     // Update is called once per frame
     void Update()
     {
         rigidBody.velocity += rigidBody.acceleration * Time.deltaTime;
         transform.position += rigidBody.velocity * Time.deltaTime;
+
+        //floatingText.text = rigidBody.velocity.magnitude.ToString("F2") + " m/s\n" + rigidBody.mass + " kg\nFriction " + rigidBody.friction;
+        //textTransform.transform.rotation = Camera.main.transform.rotation;
     }
 }

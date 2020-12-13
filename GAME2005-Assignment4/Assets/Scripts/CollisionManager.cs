@@ -10,6 +10,7 @@ public class CollisionManager : MonoBehaviour
     public List<BallBehaviour> Spheres;
     public GameObject player;
 
+    public int collisions_count = 0;
     //sliders
     public Slider cubeFrictionSlider;
     public Slider restitutionSlider;
@@ -52,6 +53,7 @@ public class CollisionManager : MonoBehaviour
     {
         public Vector3 normal;
         public bool result;
+        public float depth;
     }
 
     // Start is called before the first frame update
@@ -70,35 +72,22 @@ public class CollisionManager : MonoBehaviour
             Spheres[i].rigidBody.friction = ballFrictionSlider.value;
             Spheres[i].rigidBody.restitution = restitutionSlider.value;
             Spheres[i].rigidBody.mass = ballMassSlider.value;
-            for (int j = 1; j < Spheres.Count; j++)
+            for (int j = i + 1; j < Spheres.Count; j++)
             {
-                if (i != j && Spheres[i] != Spheres[j])
+                if (Spheres[i] != Spheres[j])
                 {
                     Manifold collision = SphereSphereCheck(Spheres[i], Spheres[j]);
                     if (collision.result)
                     {
                         CalculateImpulse(collision, Spheres[i].rigidBody, Spheres[j].rigidBody, out Vector3 velocity1, out Vector3 velocity2);
-                        if (!Spheres[i].contacts.balls.Contains(Spheres[j]))
-                        {
-                            Spheres[i].contacts.balls.Add(Spheres[j]);
-                            Spheres[i].rigidBody.velocity = velocity1;
-                            Spheres[j].rigidBody.velocity = velocity2;
+                        Spheres[i].contacts.balls.Add(Spheres[j]);
+                        
+                        ResolveSpheres(Spheres[i], Spheres[j], collision.normal);
 
-                            bounceSound.Play();
-                        }
-                        else
-                        {
-                            // resolve collision instead of impulse again.
-                            Spheres[i].rigidBody.velocity = velocity1 * velocityScalar;
-                            Spheres[j].rigidBody.velocity = velocity2 * velocityScalar;
-                        }
-                    }
-                    else
-                    {
-                        if (Spheres[i].contacts.balls.Contains(Spheres[j]))
-                        {
-                            Spheres[i].contacts.balls.Remove(Spheres[j]);
-                        }
+                        Spheres[i].rigidBody.velocity = velocity1;
+                        Spheres[j].rigidBody.velocity = velocity2;
+
+                        bounceSound.Play();
                     }
                 }
             }
@@ -119,35 +108,21 @@ public class CollisionManager : MonoBehaviour
                     }
                     else
                     {
-                        Manifold collision = AABBCheck(Cubes[i], Cubes[j]);
-                        if (collision.result)
+                        if (!Cubes[i].rigidBody.anchored && !Cubes[i].rigidBody.anchored)
                         {
-                            CalculateImpulse(collision, Cubes[i].rigidBody, Cubes[j].rigidBody, out Vector3 velocity1, out Vector3 velocity2);
-                            if (!Cubes[i].contacts.cubes.Contains(Cubes[j]))
+                            Manifold collision = AABBCheck(Cubes[i], Cubes[j]);
+                            if (collision.result)
                             {
-                                //CalculateImpulse(collision, Cubes[i].rigidBody, Cubes[j].rigidBody, out Vector3 velocity1, out Vector3 velocity2);
-                                Cubes[i].contacts.cubes.Add(Cubes[j]);
+                                CalculateImpulse(collision, Cubes[i].rigidBody, Cubes[j].rigidBody,
+                                    out Vector3 velocity1, out Vector3 velocity2);
+
+                                ResolveAABB(Cubes[i], Cubes[j], collision);
 
                                 // Add collision impulse
                                 if (!Cubes[i].rigidBody.anchored)
                                     Cubes[i].rigidBody.velocity = velocity1;
                                 if (!Cubes[j].rigidBody.anchored)
                                     Cubes[j].rigidBody.velocity = velocity2;
-                            }
-                            else
-                            {
-                                // resolve collision instead of impulse again.
-                                if (!Cubes[i].rigidBody.anchored)
-                                    Cubes[i].rigidBody.velocity = velocity1 * velocityScalar;
-                                if (!Cubes[j].rigidBody.anchored)
-                                    Cubes[j].rigidBody.velocity = velocity2 * velocityScalar;
-                            }
-                        }
-                        else
-                        {
-                            if (Cubes[i].contacts.cubes.Contains(Cubes[j]))
-                            {
-                                Cubes[i].contacts.cubes.Remove(Cubes[j]);
                             }
                         }
                     }
@@ -160,31 +135,16 @@ public class CollisionManager : MonoBehaviour
                 if (collision.result)
                 {
                     CalculateImpulse(collision, Spheres[k].rigidBody, Cubes[i].rigidBody, out Vector3 velocity1, out Vector3 velocity2);
-                    if (!Spheres[k].contacts.cubes.Contains(Cubes[i]))
-                    {
-                        Spheres[k].contacts.cubes.Add(Cubes[i]);
 
-                        // Add collision impulse
-                        Spheres[k].rigidBody.velocity = velocity1;
-                        if (!Cubes[i].rigidBody.anchored)
-                            Cubes[i].rigidBody.velocity = velocity2;
+                    ResolveSphereBox(Spheres[k],Cubes[i],collision);
 
+                    // Add collision impulse
+                    Spheres[k].rigidBody.velocity = velocity1;
+                    if (!Cubes[i].rigidBody.anchored)
+                        Cubes[i].rigidBody.velocity = velocity2;
+                    Debug.Log("Speed projected: " + Vector3.Dot(Spheres[k].rigidBody.velocity, collision.normal));
+                    if (Vector3.Dot(Spheres[k].rigidBody.velocity,collision.normal) > 0.05f)
                         bounceSound.Play();
-                    }
-                    else
-                    {
-                        // resolve collision instead of impulse again.
-                        Spheres[k].rigidBody.velocity = velocity1 * velocityScalar;
-                        if (!Cubes[i].rigidBody.anchored)
-                            Cubes[i].rigidBody.velocity = velocity2 * velocityScalar;
-                    }
-                }
-                else
-                {
-                    if (Spheres[k].contacts.cubes.Contains(Cubes[i]))
-                    {
-                        Spheres[k].contacts.cubes.Remove(Cubes[i]);
-                    }
                 }
             }
         }
@@ -221,7 +181,7 @@ public class CollisionManager : MonoBehaviour
         Vector3 size1 = a.transform.localScale;
         Vector3 size2 = b.transform.localScale;
 
-        float testX = pos1.x;
+        /*float testX = pos1.x;
         float testY = pos1.y;
         float testZ = pos1.z;
 
@@ -237,7 +197,76 @@ public class CollisionManager : MonoBehaviour
         Vector3 point = new Vector3(testX, testY, testZ);
         Vector3 normal = pos1 - point;
 
-        result.normal = normal;
+        result.normal = normal.normalized;
+        result.maxPenetration = new Vector3(0.0f,0.0f,0.0f);
+        result.result = true;
+
+        if (Mathf.Abs(result.normal.x) == 1.0f)
+        {
+            result.maxPenetration.x = size1.x / 2 + size2.x / 2;
+        }
+        else if (Mathf.Abs(result.normal.y) == 1.0f)
+        {
+            result.maxPenetration.y = size1.y / 2 + size2.y / 2;
+        }
+        else if (Mathf.Abs(result.normal.z) == 1.0f)
+        {
+            result.maxPenetration.z = size1.z / 2 + size2.z / 2;
+        }*/
+
+        /*result.normal = new Vector3(0.0f,0.0f,0.0f);
+        result.maxPenetration = new Vector3(0.0f, 0.0f, 0.0f);
+        result.result = true;
+
+        Vector3 dist = new Vector3(pos2.x - pos1.x, pos2.y - pos1.y, pos2.z - pos1.z);
+        Vector3 abs_dist = new Vector3(Mathf.Abs(dist.x), Mathf.Abs(dist.y), Mathf.Abs(dist.z));
+        float min = Mathf.Min(abs_dist.x, abs_dist.y, abs_dist.z);
+        if (min == abs_dist.x)
+        {
+            Debug.Log("RIGHT");
+            result.normal.x = (dist.x > 0 ? 1 : -1);
+            result.maxPenetration.x = size1.x / 2 + size2.x / 2;
+        }
+        else if (min == abs_dist.y)
+        {
+            Debug.Log("UP");
+            result.normal.y = (dist.y > 0 ? 1 : -1);
+            result.maxPenetration.y = size1.y / 2 + size2.y / 2;
+        }
+        else if (min == abs_dist.z)
+        {
+            Debug.Log("FORWARD");
+            result.normal.z = (dist.z > 0 ? 1 : -1);
+            result.maxPenetration.z = size1.z / 2 + size2.z / 2;
+        }*/
+
+        Vector3[] faces = new Vector3[6];
+        faces[0] = new Vector3(-1, 0, 0);
+        faces[1] = new Vector3(1, 0, 0);
+        faces[2] = new Vector3(0, -1, 0);
+        faces[3] = new Vector3(0, 1, 0);
+        faces[4] = new Vector3(0, 0, -1);
+        faces[5] = new Vector3(0, 0, 1);
+
+        float[] dists = new float[6];
+        dists[0] = max1.x - min2.x;
+        dists[1] = max2.x - min1.x;
+        dists[2] = max1.y - min2.y;
+        dists[3] = max2.y - min1.y;
+        dists[4] = max1.z - min2.z;
+        dists[5] = max2.z - min1.z;
+
+        float min = 9999.9f;
+        for (int i = 0; i < 6; i++)
+        {
+            if (dists[i] < min || i == 0)
+            {
+                result.normal = faces[i];
+                result.depth = dists[i];
+                min = dists[i];
+            }
+        }
+
         result.result = true;
 
         return result;
@@ -293,10 +322,12 @@ public class CollisionManager : MonoBehaviour
         Vector3 normal = pos1 - point;
 
         float radius = sphere.transform.localScale.x * 0.5f;
+        //Debug.Log("R: " + radius);
         Manifold result = new Manifold();
         result.normal = normal.normalized;
+        result.depth = Mathf.Abs(Vector3.Distance(pos1 - result.normal * radius, point));
         result.result = distance < radius;
-
+       
         return result;
     }
     Manifold SphereSphereCheck(BallBehaviour ball1, BallBehaviour ball2)
@@ -472,7 +503,57 @@ public class CollisionManager : MonoBehaviour
         jt = Mathf.Max(jt, -j * friction);
         jt = Mathf.Min(jt, j * friction);
 
-        velocity2 = rigidBody2.velocity + ((jt / rigidBody2.mass) * collision.normal);
         velocity1 = rigidBody1.velocity - ((jt / rigidBody1.mass) * collision.normal);
+        velocity2 = rigidBody2.velocity + ((jt / rigidBody2.mass) * collision.normal);
+    }
+
+    void ResolveSpheres(BallBehaviour ball1, BallBehaviour ball2, Vector3 normal)
+    {
+        float dist = Vector3.Distance(ball1.transform.position, ball2.transform.position);
+        float depth = ball1.rigidBody.radius + ball2.rigidBody.radius - dist;
+
+        float v1 = Vector3.Dot(ball1.rigidBody.velocity, normal);
+        float v2 = Vector3.Dot(ball2.rigidBody.velocity, normal);
+        
+        float prop1 = v1 / (v1 + v2);
+        float prop2 = v2 / (v1 + v2);
+        if ((v1 + v2) == 0.0f)
+            prop1 = prop2 = 0.0f;
+
+        ball1.transform.position = ball1.transform.position + normal * depth * prop1;
+        ball2.transform.position = ball2.transform.position - normal * depth * prop2;
+    }
+
+    void ResolveAABB(CubeBehaviour cube1, CubeBehaviour cube2, Manifold result)
+    {
+        float v1 = Mathf.Abs(Vector3.Dot(cube1.rigidBody.velocity, result.normal));
+        float v2 = Mathf.Abs(Vector3.Dot(cube2.rigidBody.velocity, result.normal));
+
+        float prop1 = v1 / (v1 + v2);
+        float prop2 = v2 / (v1 + v2);
+        if ((v1 + v2) == 0.0f)
+            prop1 = prop2 = 0.0f;
+
+        if (!cube1.anchored)
+            cube1.transform.position = cube1.transform.position + result.normal * result.depth * prop1;
+
+        if (!cube2.anchored)
+            cube2.transform.position = cube2.transform.position - result.normal * result.depth * prop2;
+    }
+
+    void ResolveSphereBox(BallBehaviour ball, CubeBehaviour cube, Manifold result)
+    {
+        float v1 = Mathf.Abs(Vector3.Dot(ball.rigidBody.velocity, result.normal));
+        float v2 = Mathf.Abs(Vector3.Dot(cube.rigidBody.velocity, result.normal));
+
+        float prop1 = v1 / (v1 + v2);
+        float prop2 = v2 / (v1 + v2);
+        if ((v1 + v2) == 0.0f)
+            prop1 = prop2 = 0.0f;
+
+        ball.transform.position = ball.transform.position + result.normal * result.depth * prop1;
+
+        if (!cube.anchored)
+            cube.transform.position = cube.transform.position - result.normal * result.depth * prop2;
     }
 }

@@ -8,12 +8,19 @@ public class CubeBehaviour : MonoBehaviour
 {
     public RigidBody rigidBody = new RigidBody();
 
+    public float forwardSpeed = 1;
+
     public bool anchored;
     public float gravity;
 
     public Contact contacts = new Contact();
 
     // Start is called before the first frame update
+    public void Init()
+    {
+        rigidBody.velocity = transform.forward * forwardSpeed;
+    }
+
     void Start()
     {
         CollisionManager.Instance.Cubes.Add(this);
@@ -24,7 +31,6 @@ public class CubeBehaviour : MonoBehaviour
         rigidBody.friction = 0.6f;
         rigidBody.anchored = anchored;
     }
-
     // Update is called once per frame
     void Update()
     {

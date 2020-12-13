@@ -47,8 +47,12 @@ public class BallBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Check all of the contacts
+
+
         rigidBody.velocity += rigidBody.acceleration * Time.deltaTime;
         transform.position += rigidBody.velocity * Time.deltaTime;
+
         if(rigidBody.velocity.magnitude <= 0.1f)
         {
             Deinit();

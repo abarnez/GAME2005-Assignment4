@@ -80,7 +80,7 @@ public class CollisionManager : MonoBehaviour
                         Spheres[i].rigidBody.velocity = velocity1;
                         Spheres[j].rigidBody.velocity = velocity2;
 
-                        bounceSound.Play();
+                        if (!bounceSound.isPlaying) bounceSound.Play();
                     }
                 }
             }
@@ -137,7 +137,9 @@ public class CollisionManager : MonoBehaviour
                         Cubes[i].rigidBody.velocity = velocity2;
                     //Debug.Log("Speed projected: " + Vector3.Dot(Spheres[k].rigidBody.velocity, collision.normal));
                     if (Vector3.Dot(Spheres[k].rigidBody.velocity, collision.normal) > 0.05f)
-                        bounceSound.Play();
+                    {
+                        if(!bounceSound.isPlaying) bounceSound.Play();
+                    }
                     else
                         Spheres[k].rigidBody.velocity *= velocityScalar;
                 }

@@ -91,7 +91,22 @@ public class PlayerMovement : MonoBehaviour
         Vector3 moveDir = (moveDirection * Time.deltaTime);
         Vector3 nextPos = characterController.transform.position + moveDir;
 
-        if(nextPos.x <= minX || nextPos.x >= maxX)
+        foreach (var obj in GameObject.FindGameObjectsWithTag("Box"))
+        {
+            MeshFilter mF = obj.GetComponent<MeshFilter>();
+            Bounds bounds = mF.mesh.bounds;
+            var min = Vector3.Scale(bounds.min, obj.transform.localScale) + obj.transform.position;
+            var max = Vector3.Scale(bounds.max, obj.transform.localScale) + obj.transform.position;
+            if (nextPos.x >= min.x - 1 && nextPos.x <= max.x + 1 && nextPos.z >= min.z - 1 && nextPos.z <= max.z + 1 &&
+                nextPos.y >= obj.transform.position.y - 1 && nextPos.y <= obj.transform.position.y + 1)
+            {
+                moveDir.x = 0;
+                moveDir.z = 0;
+                //Debug.Log("Y: " + transform.position.y + " Cube Y: " + obj.transform.position.y);
+            }
+        }
+
+       if(nextPos.x <= minX || nextPos.x >= maxX)
         {
             moveDir.x = 0;
         }
@@ -140,7 +155,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0) && canMove)
         {
-            if (Time.frameCount - lastFrame >= 250)
+            if (Time.frameCount - lastFrame >= 100)
             {
                 var obj = ObjectPool.Instance.GetPooledObject();
                 if (obj != null)

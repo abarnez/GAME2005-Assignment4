@@ -55,6 +55,7 @@ public class BallBehaviour : MonoBehaviour
     {
         // Check all of the contacts
 
+        if (!gameObject.activeInHierarchy) return;
 
         rigidBody.velocity += rigidBody.acceleration * Time.deltaTime;
         transform.position += rigidBody.velocity * Time.deltaTime;
@@ -62,7 +63,7 @@ public class BallBehaviour : MonoBehaviour
         floatingText.text = rigidBody.velocity.magnitude.ToString("F2") + " m/s\n" + rigidBody.mass + " kg\nFriction " + rigidBody.friction;
         textTransform.transform.rotation = Camera.main.transform.rotation;
 
-        if (rigidBody.velocity.magnitude <= 0.01f)
+        if (rigidBody.velocity.magnitude <= 0.03f)
         {
             Deinit();
         }

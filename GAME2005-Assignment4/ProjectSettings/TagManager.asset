@@ -9,6 +9,7 @@ TagManager:
   - Floor
   - Wall
   - Box
+  - Ball
   layers:
   - Default
   - TransparentFX

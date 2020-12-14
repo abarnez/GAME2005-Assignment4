@@ -7,6 +7,7 @@ public class ButtonScript : MonoBehaviour
 {
     public Button Button;
     public string scene1;
+    public AudioSource clickSound;
     void Start()
     {
         Button btn = Button.GetComponent<Button>();
@@ -14,6 +15,13 @@ public class ButtonScript : MonoBehaviour
     }
     void TaskOnClick()
     {
-        SceneManager.LoadScene(scene1);        
+        clickSound.Play();
+        StartCoroutine(NextScene());    
+    }
+
+    IEnumerator NextScene()
+    {
+        yield return new WaitForSeconds(1);
+        SceneManager.LoadScene(scene1);
     }
 }

@@ -42,7 +42,8 @@ public class CollisionManager : MonoBehaviour
             }
             foreach(var sphere in spheres)
             {
-                NewCheckAABBs(sphere, cubes[i]);
+                if(cubes[i].name != "Player")
+                    AABBCheck(sphere, cubes[i]);
             }
         }
 
@@ -321,5 +322,80 @@ public class CollisionManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    struct Manifold
+    {
+        public Vector3 normal;
+        public bool result;
+        public float depth;
+    }
+
+    private Manifold AABBCheck(BulletBehaviour Cube1, CubeBehaviour Cube2)
+    {
+        Manifold result = new Manifold();
+        GameObject a = Cube1.gameObject;
+        GameObject b = Cube2.gameObject;
+
+        MeshFilter aMF = a.GetComponent<MeshFilter>();
+        MeshFilter bMF = b.GetComponent<MeshFilter>();
+
+        Bounds aB = aMF.mesh.bounds;
+        Bounds bB = bMF.mesh.bounds;
+
+        var min1 = Vector3.Scale(aB.min, a.transform.localScale) + a.transform.position;
+        var max1 = Vector3.Scale(aB.max, a.transform.localScale) + a.transform.position;
+
+        var min2 = Vector3.Scale(bB.min, b.transform.localScale) + b.transform.position;
+        var max2 = Vector3.Scale(bB.max, b.transform.localScale) + b.transform.position;
+
+        if (!((min1.x <= max2.x && max1.x >= min2.x) &&
+            (min1.y <= max2.y && max1.y >= min2.y) &&
+            (min1.z <= max2.z && max1.z >= min2.z)))
+        {
+            result.result = false;
+            return result;
+        }
+
+        Vector3 pos1 = a.transform.position;
+        Vector3 pos2 = b.transform.position;
+        Vector3 size1 = a.transform.localScale;
+        Vector3 size2 = b.transform.localScale;
+
+        Vector3[] faces = new Vector3[6];
+        faces[0] = new Vector3(-1, 0, 0);
+        faces[1] = new Vector3(1, 0, 0);
+        faces[2] = new Vector3(0, -1, 0);
+        faces[3] = new Vector3(0, 1, 0);
+        faces[4] = new Vector3(0, 0, -1);
+        faces[5] = new Vector3(0, 0, 1);
+
+        float[] dists = new float[6];
+        dists[0] = max1.x - min2.x;
+        dists[1] = max2.x - min1.x;
+        dists[2] = max1.y - min2.y;
+        dists[3] = max2.y - min1.y;
+        dists[4] = max1.z - min2.z;
+        dists[5] = max2.z - min1.z;
+
+        float min = 9999.9f;
+        for (int i = 0; i < 6; i++)
+        {
+            if (dists[i] < min || i == 0)
+            {
+                result.normal = faces[i];
+                result.depth = dists[i];
+                min = dists[i];
+            }
+        }
+
+        result.result = true;
+
+        Cube1.collisionNormal = result.normal;
+        Cube1.penetration = result.depth;
+
+        Reflect(Cube1);
+
+        return result;
     }
 }

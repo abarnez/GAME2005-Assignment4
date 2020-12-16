@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - CollisionManager
+  - Anchored
+  - Floor
+  - Wall
+  - Box
+  - Ball
   layers:
   - Default
   - TransparentFX
@@ -13,8 +19,8 @@ TagManager:
   - UI
   - 
   - 
-  - Cannon
-  - Player
+  - 
+  - 
   - 
   - 
   - 
